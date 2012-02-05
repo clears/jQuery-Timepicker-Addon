@@ -118,6 +118,9 @@ $.extend(Timepicker.prototype, {
 	formattedTime: '',
 	formattedDateTime: '',
 	timezoneList: null,
+	// pre-defined formats for ISO 8601
+	ISO_8601:  'iso8601',  // YYYY-MM-DDThh:mm:ss              -> 1999-01-01T23:01:01
+	ISO_8601Z: 'iso8601z', // YYYY-MM-DDThh:mm:ss(Z|[-+]hh:mm) -> 1999-01-01T23:01:01+01:00
 
 	/* Override the default settings for all instances of the time picker.
 	   @param  settings  object - the new settings to use as defaults (anonymous object)
@@ -163,6 +166,16 @@ $.extend(Timepicker.prototype, {
 			},
 			timepicker: tp_inst // add timepicker as a property of datepicker: $.datepicker._get(dp_inst, 'timepicker');
 		});
+
+		// pre-defined formats for ISO 8601
+		if (o.timeFormat !== undefined && o.timeFormat.match(new RegExp('^'+ this.ISO_8601Z +'?$'))) {
+			tp_inst._defaults.dateFormat = $.datepicker.ISO_8601;
+			tp_inst._defaults.separator  = 'T';
+			tp_inst._defaults.timeFormat = (o.timeFormat == this.ISO_8601Z) ? 'hh:mm:ssz' : 'hh:mm:ss';
+			tp_inst._defaults.ampm = false;
+			tp_inst._defaults.timezoneIso8609 = true;
+		}
+
 		tp_inst.amNames = $.map(tp_inst._defaults.amNames, function(val) { return val.toUpperCase() });
 		tp_inst.pmNames = $.map(tp_inst._defaults.pmNames, function(val) { return val.toUpperCase() });
 
